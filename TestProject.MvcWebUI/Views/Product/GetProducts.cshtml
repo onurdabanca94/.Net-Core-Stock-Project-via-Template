@@ -1,0 +1,210 @@
+﻿@model TestProject.MvcWebUI.Models.ProductViewModel
+@{
+    ViewData["Title"] = "GetProducts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="dropdown pull-right">
+                <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+                    <i class="zmdi zmdi-more-vert"></i>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" data-toggle="modal" data-target="#product-adding-modal">Add</a></li>
+                </ul>
+            </div>
+
+            <h4 class="header-title m-t-0 m-b-30">List of Products</h4>
+
+            <div id="datatable-buttons_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                <table id="datatable-buttons" class="table table-striped table-bordered dataTable no-footer dtr-inline collapsed" role="grid" aria-describedby="datatable-buttons_info">
+                    <thead>
+                        <tr role="row">
+                            <th class="sorting_asc" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Id: activate to sort column descending" style="width: 20px;">Id</th>
+                            <th class="sorting_" tabindex="1" aria-controls="datatable-buttons" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 450px;">Name</th>
+                            <th class="sorting" tabindex="2" aria-controls="datatable-buttons" rowspan="1" colspan="1" aria-label="IsActive: activate to sort column ascending" style="width: 100px;">Is CategoryId</th>
+                            <th class="sorting" tabindex="3" aria-controls="datatable-buttons" rowspan="1" colspan="1" aria-label="AddedBy: activate to sort column ascending" style="width: 200px;">Height</th>
+                            <th class="sorting" tabindex="4" aria-controls="datatable-buttons" rowspan="1" colspan="1" aria-label="AddedDate: activate to sort column ascending" style="width: 175px; display: none;">Weight</th>
+                            <th class="sorting" tabindex="4" aria-controls="datatable-buttons" rowspan="1" colspan="1" aria-label="AddedDate: activate to sort column ascending" style="width: 175px; display: none;">Width</th>
+                            <th rowspan="1" colspan="1" style="width: 50px; display: none" ;>&</th>
+                            <th rowspan="1" colspan="1" style="width: 50px; display: none" ;>&</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            <tr role="row" class="odd">
+                                <td class="sorting_1" tabindex="0">@product.ProductId</td>
+                                <td>@product.ProductName</td>
+                                <td>@product.CategoryName</td>
+                                <td>@product.Height</td>
+                                <td>@product.Weight</td>
+                                <td>@product.Width</td>
+                                <td align="center"><button class="btn btn-purple" onclick="editProduct(@product.ProductId)">Edit</button></td>
+                                <td align="center"><button class="btn btn-danger" onclick="deleteProduct(@product.ProductId)">Delete</button></td>
+                                <td align="center"><a href="/Product/GetProductDetail/@product.ProductId" class="btn btn-info">Detail</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div><!-- end col -->
+</div>
+
+<div id="product-adding-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form asp-controller="Product" asp-action="Add" method="post" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"><i class="fa fa-plus-circle"></i> Add Product</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Name</label>
+                                <input asp-for="@Model.Product.Name" type="text" class="form-control" id="field-1" placeholder="Any Material Names">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">CategoryId</label>
+                                <select class="form-control" id="drpCategories" asp-for="@Model.Product.CategoryId" asp-items="@Model.Categories">
+                                    <option disabled selected value="-1">--Choose--</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Height</label>
+                                <input asp-for="@Model.Product.Height" type="text" class="form-control" id="field-1" placeholder="How tall is it?">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Weight</label>
+                                <input asp-for="@Model.Product.Weight" type="text" class="form-control" id="field-1" placeholder="How heavy is it?">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Width</label>
+                                <input asp-for="@Model.Product.Width" type="text" class="form-control" id="field-1" placeholder="How large is it?">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-6" class="control-label">Explanation</label>
+                                <textarea asp-for="@Model.Product.Explanation" type="text" class="form-control autogrow" id="field-1" placeholder="Write something about product" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px;"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="field-6" class="control-label">Ürün Resim</label>
+                                <input type="file" asp-items ="@Model.FormFiles" name="formFiles" class="dropify" multiple asp-all-route-data-show-upload="true" asp-all-route-data-height="85"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-purple waves-effect waves-light">Save changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><!-- /.modal -->
+<div id="product-updating-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form asp-controller="Product" asp-action="Edit" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"><i class="fa fa-plus-circle"></i> Update Product</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input asp-for="@Model.Product.Id" id="productId" hidden />
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Name</label>
+                                <input asp-for="@Model.Product.Name" type="text" class="form-control" id="nameForUpdate" placeholder="Change that name">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">CategoryId</label>
+                                <select class="form-control" id="drpCategoriesForUpdate" asp-for="@Model.Product.CategoryId" asp-items="@Model.Categories">
+                                    <option disabled selected value="-1">--Choose--</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Height</label>
+                                <input asp-for="@Model.Product.Height" type="text" class="form-control" id="heightForUpdate" placeholder="How tall is it?">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Weight</label>
+                                <input asp-for="@Model.Product.Weight" type="text" class="form-control" id="weightForUpdate" placeholder="How fat ass is it?">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-1" class="control-label">Width</label>
+                                <input asp-for="@Model.Product.Width" type="text" class="form-control" id="widthForUpdate" placeholder="This is must be very large">
+                            </div>
+                            <div class="form-group">
+                                <label for="field-12" class="control-label">Explanation</label>
+                                <textarea asp-for="@Model.Product.Explanation" type="text" class="form-control autogrow" id="explanationForUpdate" placeholder="write something about product" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-purple waves-effect waves-light">Save changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><!-- /.modal -->
+@section scripts{ 
+    <script type="text/javascript">
+        function editProduct(id) {
+            $.get("/Product/Edit", { id: id })
+                .done(function (result) {
+                    $('#productId').val(result.id);
+                    $('#nameForUpdate').val(result.name);
+                    $('#heightForUpdate').val(result.height);
+                    $('#weightForUpdate').val(result.weight);
+                    $('#widthForUpdate').val(result.width);
+                    $('#explanationForUpdate').val(result.explanation);
+                    $('#drpCategoriesForUpdate').val(result.categoryId);
+                    $('#product-updating-modal').modal('show');
+                })
+        }
+
+        function deleteProduct(id) {
+            swal({
+                    title: "Silmek istediğinizden emin misiniz?",
+                    text: "Silinen kayıtlar bir daha listelenmez!",
+                    type: "warning",
+                    showCancelButton: true,
+                    cancelButtonText: "İptal",
+                    confirmButtonClass: "btn-warning",
+                    confirmButtonText: "Evet, silebilirsiniz!",
+                    closeOnConfirm: false
+                },
+                function() {
+                    $.get("/Product/Delete/", { id: id })
+                        .done(function(result) {
+                            if (result == 0) {
+                                swal("Warning!", "Bir Hata Oluştu!", "warning");
+                            }
+                            else {
+                                swal({
+                                    title: "Tebrikler! Islem basariyla gerceklesti!",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    confirmButtonText: "Tamam",
+                                    closeOnConfirm: true
+
+                                },
+                                    function(){ 
+                                        location.reload();
+                                    });
+                            }
+                            
+                        })
+                
+                });
+        }
+    </script>
+}
